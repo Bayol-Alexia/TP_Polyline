@@ -16,11 +16,54 @@ let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
     {
-        /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
+        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiALQAWAKxEAnMr4AmAGwB2ABwbVJ1QGYLAGhCYlARj18iOvheUarDvu74OjAF9A2zQsPEIiCAAnAEMAdwIoanpmWgA1Jn4hJBA0MUlpWQUEC1UHVxM+DT4DaosDVVU9W3sERR1VF2UjPj19Az0LHQajZWDQjBwCYhiEpIoAIViAYwBrWGRVsGzZfIkpGVyS-QrO3ocvMwtqnVbEHz0iHuUAh2blZT0HBx0JvKmEVmcUS+GSTHw4jA0V2uX2hSOoBOT2+OhMlycBk8HmU9wQj2eYycQz4zQMbgs-zC00ic1B4NgK1iyB2gj2ogORWOjlUOmeQxMRj0r1UGmFeI6YyIFneGhMei8DmGVMBMyiIIWtEYrA43FhIgKh2KDyMBmectNn0s9SMEs86h0PRxfDUWNFwRCIHwqAgcHZ4Rm7MNXKRSh0dSIRjKv3KUeUaOUNjsSjMfKxceFFi01QMKoDkVI5CDnMR8jDOj5UfKnQCHgTeLURH6RgrLy+o0pnupQPV8zBxYRxvxFabwstRicqgMTglDmM0unxl6GkaQ0dHsCQA */
         id: "polyLine",
+
         initial: "idle",
+
         states : {
             idle: {
+                on: {
+                    MOUSECLICK: {
+                        target: "drawing",
+                        actions: "createLine"
+                    }
+                }
+            },
+
+            drawing: {
+                on: {
+                    Backspace: {
+                        target: "drawing",
+                        actions: "removeLastPoint",
+                        internal: true,
+                        cond: "plusDeDeuxPoints"
+                    },
+
+                    MOUSEMOVE: {
+                        target: "drawing",
+                        internal: true,
+                        actions: "setLastPoint"
+                    },
+
+                    Enter: {
+                        target: "idle",
+                        actions: "saveLine",
+                        cond: "pasPlein"
+                    },
+
+                    Escape: {
+                        target: "idle",
+                        actions: "abandon"
+                    },
+
+                    MOUSECLICK: {
+                        target: "drawing",
+                        internal: true,
+                        actions: "addPoint",
+                        cond: "pasPlein"
+                    }
+                }
             }
         }
     },
